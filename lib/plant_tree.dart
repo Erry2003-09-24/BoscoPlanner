@@ -67,6 +67,7 @@ class _PlantTreePageState extends State<PlantTreePage> {
       'date': DateTime.now().toIso8601String(),
       'latitude': _position!.latitude,
       'longitude': _position!.longitude,
+      'planter': 'Mario Rossi',
     };
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -80,7 +81,7 @@ class _PlantTreePageState extends State<PlantTreePage> {
       builder: (_) => AlertDialog(
         title: Text('Albero piantato'),
         content: Text(
-            'Albero piantato in posizione:\nLat: ${_position!.latitude.toStringAsFixed(5)}\nLon: ${_position!.longitude.toStringAsFixed(5)}\nID: ${newOp['id']}'),
+            'Albero piantato in posizione:\nLat: ${_position!.latitude.toStringAsFixed(5)}\nLon: ${_position!.longitude.toStringAsFixed(5)}\nID: ${newOp['id']} \nData: ${DateTime.now().toLocal()} \nPiantatore: ${newOp['planter']}'),
         actions: [
           TextButton(
             onPressed: () {

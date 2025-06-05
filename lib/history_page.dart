@@ -127,7 +127,9 @@ class _HistoryPageState extends State<HistoryPage> {
                         subtitle: Text(
                           'ID: ${op['id']}\n'
                           'Data: ${_formatDate(op['date'])}\n'
-                          'Lat: ${op['latitude'].toStringAsFixed(5)}, Long: ${op['longitude'].toStringAsFixed(5)}',
+                          'Lat: ${op['latitude'].toStringAsFixed(5)}, Long: ${op['longitude'].toStringAsFixed(5)}\n'
+                          'Piantatore: ${op['planter'] ?? 'Sconosciuto'}\n'
+                          'Operatore di taglio: ${op['cutBy'] ?? 'Sconosciuto'}',
                           style: const TextStyle(fontSize: 14, height: 1.3),
                         ),
                         isThreeLine: true,

@@ -129,6 +129,8 @@ class _CutTreePageState extends State<CutTreePage> {
       'latitude': _position?.latitude,
       'longitude': _position?.longitude,
       'plantedId': treeToCut['id'], // collegamento all'albero piantato
+      'planter': 'Mario Rossi', // Puoi personalizzare il nome del piantatore
+      'cutBy': 'Luigi Bianchi', // Nome di chi ha effettuato il taglio
     };
 
     setState(() {
@@ -141,7 +143,7 @@ class _CutTreePageState extends State<CutTreePage> {
       builder: (_) => AlertDialog(
         title: Text('Intervento registrato'),
         content: Text(
-          'Albero tagliato in posizione:\nLat: ${_position?.latitude.toStringAsFixed(5)}\nLon: ${_position?.longitude.toStringAsFixed(5)}\nID albero piantato: ${treeToCut['id']}',
+          'Albero tagliato in posizione:\nLat: ${_position?.latitude.toStringAsFixed(5)}\nLon: ${_position?.longitude.toStringAsFixed(5)}\nID albero piantato: ${treeToCut['id']} \nOperatore di taglio: ${newOp['cutBy']} \nData: ${DateTime.now().toLocal()}',
         ),
         actions: [
           TextButton(
