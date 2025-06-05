@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uuid/uuid.dart';
 import 'services/location_services.dart';
 import 'services/weather_services.dart';
 
@@ -16,6 +17,7 @@ class _CutTreePageState extends State<CutTreePage> {
   bool _loading = true;
   String? _error;
   List<Map<String, dynamic>> _operations = [];
+  final Uuid _uuid = Uuid();
 
   @override
   void initState() {
@@ -24,7 +26,6 @@ class _CutTreePageState extends State<CutTreePage> {
     _loadData();
   }
 
-  // Carica operazioni salvate
   Future<void> _loadOperations() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final opsString = prefs.getString('operations') ?? '[]';
@@ -33,7 +34,6 @@ class _CutTreePageState extends State<CutTreePage> {
     });
   }
 
-  // Salva la lista operazioni in locale
   Future<void> _saveOperations() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('operations', jsonEncode(_operations));
@@ -79,19 +79,58 @@ class _CutTreePageState extends State<CutTreePage> {
     return true;
   }
 
-  // Controlla se ci sono alberi piantati
-  bool _hasPlantedTrees() {
-    return _operations.any((op) => op['type'] == 'piantato');
+  // Ritorna la lista di alberi piantati ancora non tagliati (id di piantati senza corrispondente taglio)
+  List<Map<String, dynamic>> _getUncutPlantedTrees() {
+    // Alberi piantati
+    final plantedTrees = _operations.where((op) => op['type'] == 'piantato').toList();
+
+    // Alberi tagliati (collegati tramite 'plantedId')
+    final cutTreeIds = _operations
+        .where((op) => op['type'] == 'tagliato')
+        .map((op) => op['plantedId'])
+        .toSet();
+
+    // Filtra gli alberi piantati non ancora tagliati
+    return plantedTrees.where((tree) => !cutTreeIds.contains(tree['id'])).toList();
   }
 
-  // Salva l’operazione di taglio
+  bool _hasPlantedTrees() {
+    return _getUncutPlantedTrees().isNotEmpty;
+  }
+
+  // Salva operazione di taglio collegandola all'albero piantato
   void _saveOperation() async {
+    final uncutTrees = _getUncutPlantedTrees();
+
+    if (uncutTrees.isEmpty) {
+      // Nessun albero da tagliare
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: Text('Nessun albero da tagliare'),
+          content: Text('Prima devi piantare almeno un albero.'),
+          actions: [
+            TextButton(
+              child: Text('OK'),
+              onPressed: () => Navigator.pop(context),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
+    final treeToCut = uncutTrees.last; // Taglio l'ultimo piantato non tagliato
+
     final newOp = {
+      'id': _uuid.v4(),
       'type': 'tagliato',
       'date': DateTime.now().toIso8601String(),
       'latitude': _position?.latitude,
       'longitude': _position?.longitude,
+      'plantedId': treeToCut['id'], // collegamento all'albero piantato
     };
+
     setState(() {
       _operations.add(newOp);
     });
@@ -102,7 +141,7 @@ class _CutTreePageState extends State<CutTreePage> {
       builder: (_) => AlertDialog(
         title: Text('Intervento registrato'),
         content: Text(
-          'Albero tagliato in posizione:\nLat: ${_position?.latitude.toStringAsFixed(5)}\nLon: ${_position?.longitude.toStringAsFixed(5)}',
+          'Albero tagliato in posizione:\nLat: ${_position?.latitude.toStringAsFixed(5)}\nLon: ${_position?.longitude.toStringAsFixed(5)}\nID albero piantato: ${treeToCut['id']}',
         ),
         actions: [
           TextButton(
@@ -185,26 +224,25 @@ class _CutTreePageState extends State<CutTreePage> {
                           'Conferma taglio',
                           style: TextStyle(color: Colors.white),
                         ),
-                        onPressed: canCutAndHasTrees
-                            ? _saveOperation
-                            : () {
-                                if (!_hasPlantedTrees()) {
-                                  showDialog(
-                                    context: context,
-                                    builder: (_) => AlertDialog(
-                                      title: Text('Nessun albero da tagliare'),
-                                      content: Text(
-                                          'Prima devi piantare almeno un albero.'),
-                                      actions: [
-                                        TextButton(
-                                          child: Text('OK'),
-                                          onPressed: () => Navigator.pop(context),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                }
-                              },
+                        onPressed: canCutAndHasTrees ? _saveOperation : () {
+                          if (!_hasPlantedTrees()) {
+                            showDialog(
+                              context: context,
+                              builder: (_) => AlertDialog(
+                                title: Text('Nessun albero da tagliare'),
+                                content: Text(
+                                  'Prima devi piantare almeno un albero.',
+                                ),
+                                actions: [
+                                  TextButton(
+                                    child: Text('OK'),
+                                    onPressed: () => Navigator.pop(context),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
+                        },
                         style: ElevatedButton.styleFrom(
                           backgroundColor:
                               canCutAndHasTrees ? Colors.green[700] : Colors.grey,

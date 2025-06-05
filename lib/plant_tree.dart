@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uuid/uuid.dart'; // Importa UUID
 import 'services/location_services.dart';
 
 class PlantTreePage extends StatefulWidget {
@@ -15,6 +16,8 @@ class _PlantTreePageState extends State<PlantTreePage> {
   bool _loading = true;
   String? _error;
   List<Map<String, dynamic>> _operations = [];
+
+  final Uuid _uuid = Uuid(); // Crea istanza UUID
 
   @override
   void initState() {
@@ -59,6 +62,7 @@ class _PlantTreePageState extends State<PlantTreePage> {
     }
 
     final newOp = {
+      'id': _uuid.v4(),  // Genera un id unico
       'type': 'piantato',
       'date': DateTime.now().toIso8601String(),
       'latitude': _position!.latitude,
@@ -76,7 +80,7 @@ class _PlantTreePageState extends State<PlantTreePage> {
       builder: (_) => AlertDialog(
         title: Text('Albero piantato'),
         content: Text(
-            'Albero piantato in posizione:\nLat: ${_position!.latitude.toStringAsFixed(5)}\nLon: ${_position!.longitude.toStringAsFixed(5)}'),
+            'Albero piantato in posizione:\nLat: ${_position!.latitude.toStringAsFixed(5)}\nLon: ${_position!.longitude.toStringAsFixed(5)}\nID: ${newOp['id']}'),
         actions: [
           TextButton(
             onPressed: () {

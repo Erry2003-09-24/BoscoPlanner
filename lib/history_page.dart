@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -110,6 +109,7 @@ class _HistoryPageState extends State<HistoryPage> {
                                 color: color.withOpacity(0.9)),
                           ),
                           subtitle: Text(
+                            'ID: ${op['id']}\n'
                             'Data: ${_formatDate(op['date'])}\n'
                             'Lat: ${op['latitude'].toStringAsFixed(5)}, Long: ${op['longitude'].toStringAsFixed(5)}',
                             style: const TextStyle(fontSize: 14, height: 1.3),
@@ -125,11 +125,34 @@ class _HistoryPageState extends State<HistoryPage> {
     );
   }
 
+  void _handleClearPressed() {
+    if (_operations.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text('Errore'),
+          content: const Text('Lo storico è già vuoto. Nessuna operazione da cancellare.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+    } else {
+      _clearHistory();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Storico operazioni', style: TextStyle(fontWeight: FontWeight.bold),),
+        title: const Text(
+          'Storico operazioni',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         foregroundColor: Colors.white,
         backgroundColor: Colors.green[700],
       ),
@@ -137,7 +160,6 @@ class _HistoryPageState extends State<HistoryPage> {
         padding: const EdgeInsets.all(12.0),
         child: Column(
           children: [
-            // Se nessuna operazione, mostra messaggio centrale
             if (_operations.isEmpty)
               Expanded(
                 child: Center(
@@ -148,35 +170,29 @@ class _HistoryPageState extends State<HistoryPage> {
                 ),
               )
             else
-              // Altrimenti mostra due liste distinte scrollabili (ognuna in Expanded)
               Expanded(
                 child: Column(
                   children: [
-                    // Lista piantati
                     _buildList('piantati', _piantati, Icons.nature, Colors.green[700]!),
-
                     const SizedBox(height: 16),
-
-                    // Lista tagliati
                     _buildList('tagliati', _tagliati, Icons.delete, Colors.red[700]!),
                   ],
                 ),
               ),
-
             const SizedBox(height: 12),
-
             ElevatedButton.icon(
-              onPressed: _operations.isEmpty ? null : _clearHistory,
+              onPressed: _handleClearPressed,
               icon: const Icon(Icons.delete_forever, color: Colors.white),
-              label: const Text('Cancella storico', style: TextStyle(fontWeight: FontWeight.bold),),
+              label: const Text(
+                'Cancella storico',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
               style: ElevatedButton.styleFrom(
                 foregroundColor: Colors.white,
                 backgroundColor: Colors.green[700],
                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                textStyle:
-                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30)),
+                textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
               ),
             ),
           ],
