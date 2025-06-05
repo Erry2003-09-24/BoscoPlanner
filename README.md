@@ -1,6 +1,6 @@
 ﻿# BoscoPlanner
 
-BoscoPlanner GPS è un’app frontend progettata per supportare gli operatori nella gestione della filiera bosco-legno. Consente di monitorare e registrare direttamente sul campo le principali attività di piantumazione e taglio degli alberi, fornendo informazioni in tempo reale sulla posizione GPS e sulle condizioni meteo, per facilitare decisioni sia su quando piantare un albero che su quando tagliare. Grazie alla registrazione in locale degli interventi mediante shared_prefereces, l’app permette di mantenere uno storico delle operazioni svolte (sia piantumazione che taglio), migliorando la tracciabilità e l’organizzazione delle attività forestali.
+BoscoPlanner è un’app frontend progettata per supportare gli operatori nella gestione della filiera bosco-legno. Consente di monitorare e registrare direttamente sul campo le principali attività di piantumazione e taglio degli alberi, fornendo informazioni in tempo reale sulla posizione GPS e sulle condizioni meteo, per facilitare decisioni sia su quando piantare un albero che su quando tagliarlo. Grazie alla registrazione in locale degli interventi mediante shared_prefereces, l’app permette di mantenere uno storico delle operazioni svolte (sia piantumazione che taglio), migliorando la tracciabilità e l’organizzazione delle attività forestali.
 
 ## Funzionalità principali dell'app
 
