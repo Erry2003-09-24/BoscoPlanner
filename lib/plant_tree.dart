@@ -85,8 +85,8 @@ class _PlantTreePageState extends State<PlantTreePage> {
         actions: [
           TextButton(
             onPressed: () {
-              Navigator.pop(context); // chiudi dialog
-              Navigator.pop(context); // torna indietro
+              Navigator.pop(context); 
+              Navigator.pop(context); 
             },
             child: Text('OK'),
           ),

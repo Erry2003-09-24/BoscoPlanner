@@ -129,7 +129,7 @@ class _CutTreePageState extends State<CutTreePage> {
       'latitude': _position?.latitude,
       'longitude': _position?.longitude,
       'plantedId': treeToCut['id'], // collegamento all'albero piantato
-      'planter': 'Mario Rossi', // Puoi personalizzare il nome del piantatore
+      'planter': 'Mario Rossi', // Nome del piantatore
       'cutBy': 'Luigi Bianchi', // Nome di chi ha effettuato il taglio
     };
 
