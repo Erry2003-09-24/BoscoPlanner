@@ -209,8 +209,8 @@ class _CutTreePageState extends State<CutTreePage> {
                       SizedBox(height: 20),
                       Text(
                         canCut
-                            ? 'Condizioni favorevoli per il taglio'
-                            : 'Condizioni meteo NON favorevoli',
+                            ? 'Condizioni meteo favorevoli per il taglio'
+                            : 'Condizioni meteo NON favorevoli per il taglio',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: canCut ? Colors.green : Colors.red,
