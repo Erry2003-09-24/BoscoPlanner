@@ -74,6 +74,8 @@ class _CutTreePageState extends State<CutTreePage> {
     return true;
   }
 
+  // save the cut operation
+  // and show a confirmation dialog
   void _saveOperation() async {
     final newOp = {
       'type': 'tagliato',
@@ -149,10 +151,10 @@ class _CutTreePageState extends State<CutTreePage> {
                       _buildWeatherInfo(),
                       SizedBox(height: 20),
                       Text(
-                        canCut ? 'Condizioni favorevoli per il taglio ✅' : 'Condizioni meteo NON favorevoli ❌',
+                        canCut ? 'Condizioni favorevoli per il taglio' : 'Condizioni meteo NON favorevoli',
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            color: canCut ? Colors.green : Colors.red,
+                            color: canCut ? Colors.green : Colors.red, // Color based on condition
                             fontSize: 16),
                       ),
                       SizedBox(height: 20),
