@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'home_page.dart';
 
+// Splash Screen for BoscoPlanner
 class SplashScreen extends StatefulWidget {
   @override
   _SplashScreenState createState() => _SplashScreenState();
