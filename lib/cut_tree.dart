@@ -48,7 +48,9 @@ class _CutTreePageState extends State<CutTreePage> {
     try {
       final position = await LocationService.getCurrentPosition();
       final weather = await WeatherService.getWeather(
-          position.latitude, position.longitude);
+        position.latitude,
+        position.longitude,
+      );
 
       setState(() {
         _position = position;
@@ -66,16 +68,23 @@ class _CutTreePageState extends State<CutTreePage> {
   bool _isWeatherGoodForCut() {
     if (_weatherData == null) return false;
 
-    String mainWeather = _weatherData!['weather'][0]['main'].toString().toLowerCase();
+    String mainWeather =
+        _weatherData!['weather'][0]['main'].toString().toLowerCase();
 
-    if (mainWeather.contains('rain') || mainWeather.contains('snow') || mainWeather.contains('storm')) {
+    if (mainWeather.contains('rain') ||
+        mainWeather.contains('snow') ||
+        mainWeather.contains('storm')) {
       return false;
     }
     return true;
   }
 
-  // save the cut operation
-  // and show a confirmation dialog
+  // Controlla se ci sono alberi piantati
+  bool _hasPlantedTrees() {
+    return _operations.any((op) => op['type'] == 'piantato');
+  }
+
+  // Salva l’operazione di taglio
   void _saveOperation() async {
     final newOp = {
       'type': 'tagliato',
@@ -93,14 +102,16 @@ class _CutTreePageState extends State<CutTreePage> {
       builder: (_) => AlertDialog(
         title: Text('Intervento registrato'),
         content: Text(
-            'Albero tagliato in posizione:\nLat: ${_position?.latitude.toStringAsFixed(5)}\nLon: ${_position?.longitude.toStringAsFixed(5)}'),
+          'Albero tagliato in posizione:\nLat: ${_position?.latitude.toStringAsFixed(5)}\nLon: ${_position?.longitude.toStringAsFixed(5)}',
+        ),
         actions: [
           TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-                Navigator.pop(context);
-              },
-              child: Text('OK'))
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.pop(context);
+            },
+            child: Text('OK'),
+          ),
         ],
       ),
     );
@@ -127,10 +138,14 @@ class _CutTreePageState extends State<CutTreePage> {
   @override
   Widget build(BuildContext context) {
     final canCut = _isWeatherGoodForCut();
+    final canCutAndHasTrees = canCut && _hasPlantedTrees();
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Taglia un albero', style: TextStyle(fontWeight: FontWeight.bold),),
+        title: Text(
+          'Taglia un albero',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         foregroundColor: Colors.white,
         backgroundColor: Colors.green[700],
       ),
@@ -147,30 +162,65 @@ class _CutTreePageState extends State<CutTreePage> {
                         textAlign: TextAlign.center,
                       ),
                       SizedBox(height: 20),
-                      Text('Meteo attuale:', style: TextStyle(fontWeight: FontWeight.bold)),
+                      Text(
+                        'Meteo attuale:',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                       _buildWeatherInfo(),
                       SizedBox(height: 20),
                       Text(
-                        canCut ? 'Condizioni favorevoli per il taglio' : 'Condizioni meteo NON favorevoli',
+                        canCut
+                            ? 'Condizioni favorevoli per il taglio'
+                            : 'Condizioni meteo NON favorevoli',
                         style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: canCut ? Colors.green : Colors.red, // Color based on condition
-                            fontSize: 16),
+                          fontWeight: FontWeight.bold,
+                          color: canCut ? Colors.green : Colors.red,
+                          fontSize: 16,
+                        ),
                       ),
                       SizedBox(height: 20),
                       ElevatedButton.icon(
-                        icon: Icon(Icons.save, color: Colors.white,),
-                        label: Text('Conferma taglio', style: TextStyle(color: Colors.white),),
-                        onPressed: canCut ? _saveOperation : null,
+                        icon: Icon(Icons.save, color: Colors.white),
+                        label: Text(
+                          'Conferma taglio',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        onPressed: canCutAndHasTrees
+                            ? _saveOperation
+                            : () {
+                                if (!_hasPlantedTrees()) {
+                                  showDialog(
+                                    context: context,
+                                    builder: (_) => AlertDialog(
+                                      title: Text('Nessun albero da tagliare'),
+                                      content: Text(
+                                          'Prima devi piantare almeno un albero.'),
+                                      actions: [
+                                        TextButton(
+                                          child: Text('OK'),
+                                          onPressed: () => Navigator.pop(context),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                }
+                              },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: canCut ? Colors.green[700] : Colors.grey,
-                          padding: EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-                          textStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          backgroundColor:
+                              canCutAndHasTrees ? Colors.green[700] : Colors.grey,
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 24,
+                            vertical: 14,
+                          ),
+                          textStyle: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                      )
+                      ),
                     ],
                   ),
                 ),
