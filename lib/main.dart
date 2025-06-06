@@ -9,12 +9,12 @@ class BoscoPlannerApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'BoscoPlanner GPS',
+      title: 'BoscoPlanner',
       theme: ThemeData(
-        primarySwatch: Colors.green,
+        primarySwatch: Colors.green, // Colore principale dell'app (con i temi di verde)
       ),
       home: SplashScreen(),
-      debugShowCheckedModeBanner: false,
+      debugShowCheckedModeBanner: false, // Disabilita il banner di debug
     );
   }
 }
