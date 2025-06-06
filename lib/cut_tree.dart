@@ -34,6 +34,14 @@ class _CutTreePageState extends State<CutTreePage> {
     });
   }
 
+  /// Salva le operazioni in SharedPreferences
+  /// per poterle recuperare in futuro.
+  /// /// Le operazioni sono salvate come una lista di mappe
+  /// in formato JSON.
+  /// /// Ogni operazione ha un ID unico generato con UUID,
+  /// un tipo (piantato o tagliato), una data, le coordinate
+  /// di latitudine e longitudine, e altri dettagli
+  /// come il nome del piantatore e di chi ha effettuato il taglio.
   Future<void> _saveOperations() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('operations', jsonEncode(_operations));
