@@ -16,7 +16,9 @@ class _SplashScreenState extends State<SplashScreen> {
     // After this duration, it will navigate to the HomePage
     Future.delayed(Duration(seconds: 3), () {
       Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (_) => HomePage()));
+        context,
+        MaterialPageRoute(builder: (_) => HomePage()),
+      );
     });
   }
 
@@ -31,7 +33,11 @@ class _SplashScreenState extends State<SplashScreen> {
             SizedBox(height: 20),
             Text(
               'BoscoPlanner',
-              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.green[700]),
+              style: TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+                color: Colors.green[700],
+              ),
             ),
           ],
         ),
