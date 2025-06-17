@@ -1,4 +1,4 @@
-name: Flutter CI
+name: Flutter Continuous Integration
 
 on:
   push:
@@ -24,3 +24,7 @@ jobs:
     
     - name: Build APK
       run: flutter build apk --debug
+
+    - name: Create config.dart with API key
+      run: |
+        echo "const String apiKey = '${{ secrets.API_KEY }}';" > lib/config.dart
