@@ -6,6 +6,12 @@ import 'package:uuid/uuid.dart';
 import 'services/location_services.dart';
 import 'services/weather_services.dart';
 
+// Pagina per tagliare gli alberi
+// Questa pagina permette di registrare un intervento di taglio
+// associandolo a un albero piantato.
+// Mostra le condizioni meteo attuali e verifica se sono adatte al taglio.
+// Le operazioni vengono salvate in SharedPreferences
+// per poterle recuperare in futuro.
 class CutTreePage extends StatefulWidget {
   @override
   _CutTreePageState createState() => _CutTreePageState();
