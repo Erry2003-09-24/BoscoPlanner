@@ -1,6 +1,7 @@
 import 'dart:convert';
+import 'package:boscoplanner/config.dart';
 import 'package:http/http.dart' as http;
-import '../config.dart'; 
+
 
 class WeatherService {
   static const String _apiKey = apiKey;
