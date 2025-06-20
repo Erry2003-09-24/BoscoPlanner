@@ -100,21 +100,21 @@ class _CutTreePageState extends State<CutTreePage> {
 
     // Alberi tagliati (collegati tramite 'plantedId')
     final cutTreeIds = _operations
-        .where((op) => op['type'] == 'tagliato')
-        .map((op) => op['plantedId'])
-        .toSet();
+        .where((op) => op['type'] == 'tagliato') // Filtra le operazioni di taglio
+        .map((op) => op['plantedId']) // Estrae gli ID degli alberi piantati collegati
+        .toSet(); // Usa un Set per evitare duplicati
 
     // Filtra gli alberi piantati non ancora tagliati
     return plantedTrees.where((tree) => !cutTreeIds.contains(tree['id'])).toList();
   }
 
   bool _hasPlantedTrees() {
-    return _getUncutPlantedTrees().isNotEmpty;
+    return _getUncutPlantedTrees().isNotEmpty; // Controlla se ci sono alberi piantati non ancora tagliati
   }
 
   // Salva operazione di taglio collegandola all'albero piantato
-  void _saveOperation() async {
-    final uncutTrees = _getUncutPlantedTrees();
+  void _saveOperation() async { 
+    final uncutTrees = _getUncutPlantedTrees(); 
 
     if (uncutTrees.isEmpty) {
       // Nessun albero da tagliare
@@ -137,20 +137,20 @@ class _CutTreePageState extends State<CutTreePage> {
     final treeToCut = uncutTrees.last; // Taglio l'ultimo piantato non tagliato
 
     final newOp = {
-      'id': _uuid.v4(),
-      'type': 'tagliato',
-      'date': DateTime.now().toIso8601String(),
+      'id': _uuid.v4(), // Genera un ID unico per l'operazione
+      'type': 'tagliato', // setta il tipo di operazione a 'tagliato'
+      'date': DateTime.now().toIso8601String(), // Data in cui è stato effettuato il taglio
       'latitude': _position?.latitude,
       'longitude': _position?.longitude,
       'plantedId': treeToCut['id'], // collegamento all'albero piantato
-      'planter': 'Mario Rossi', // Nome del piantatore
-      'cutBy': 'Luigi Bianchi', // Nome di chi ha effettuato il taglio
+      'planter': 'Mario Rossi', // Nome della persona che ha piantato l'albero
+      'cutBy': 'Luigi Bianchi', // Nome dell'operatore di taglio (cutting operator)
     };
 
     setState(() {
-      _operations.add(newOp);
+      _operations.add(newOp); 
     });
-    await _saveOperations();
+    await _saveOperations(); // Salva le operazioni aggiornate
 
     showDialog(
       context: context,
@@ -180,7 +180,7 @@ class _CutTreePageState extends State<CutTreePage> {
     String iconCode = _weatherData!['weather'][0]['icon'];
     String iconUrl = 'http://openweathermap.org/img/wn/$iconCode@2x.png';
 
-    return Card(
+    return Card( 
       margin: EdgeInsets.all(12),
       child: ListTile(
         leading: Image.network(iconUrl),
