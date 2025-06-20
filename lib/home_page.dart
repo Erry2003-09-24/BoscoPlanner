@@ -30,15 +30,15 @@ class _HomePageState extends State<HomePage> {
     });
 
     try {
-      final position = await LocationService.getCurrentPosition();
-      final weather = await WeatherService.getWeather(
+      final position = await LocationService.getCurrentPosition(); //fa uso della libreria geolocator per ottenere la posizione attuale
+      final weather = await WeatherService.getWeather( //fa uso della libreria weather_service per ottenere le informazioni meteo
         position.latitude,
         position.longitude,
       );
 
       setState(() {
-        _currentPosition = position;
-        _weatherData = weather;
+        _currentPosition = position; //salva la posizione attuale
+        _weatherData = weather; //salva le informazioni meteo
         _loading = false;
       });
     } catch (e) {
