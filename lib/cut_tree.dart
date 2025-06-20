@@ -96,40 +96,50 @@ class _CutTreePageState extends State<CutTreePage> {
   // Ritorna la lista di alberi piantati ancora non tagliati (id di piantati senza corrispondente taglio)
   List<Map<String, dynamic>> _getUncutPlantedTrees() {
     // Alberi piantati
-    final plantedTrees = _operations.where((op) => op['type'] == 'piantato').toList();
+    final plantedTrees =
+        _operations.where((op) => op['type'] == 'piantato').toList();
 
     // Alberi tagliati (collegati tramite 'plantedId')
-    final cutTreeIds = _operations
-        .where((op) => op['type'] == 'tagliato') // Filtra le operazioni di taglio
-        .map((op) => op['plantedId']) // Estrae gli ID degli alberi piantati collegati
-        .toSet(); // Usa un Set per evitare duplicati
+    final cutTreeIds =
+        _operations
+            .where(
+              (op) => op['type'] == 'tagliato',
+            ) // Filtra le operazioni di taglio
+            .map(
+              (op) => op['plantedId'],
+            ) // Estrae gli ID degli alberi piantati collegati
+            .toSet(); // Usa un Set per evitare duplicati
 
     // Filtra gli alberi piantati non ancora tagliati
-    return plantedTrees.where((tree) => !cutTreeIds.contains(tree['id'])).toList();
+    return plantedTrees
+        .where((tree) => !cutTreeIds.contains(tree['id']))
+        .toList();
   }
 
   bool _hasPlantedTrees() {
-    return _getUncutPlantedTrees().isNotEmpty; // Controlla se ci sono alberi piantati non ancora tagliati
+    return _getUncutPlantedTrees()
+        .isNotEmpty; // Controlla se ci sono alberi piantati non ancora tagliati
   }
 
   // Salva operazione di taglio collegandola all'albero piantato
-  void _saveOperation() async { 
-    final uncutTrees = _getUncutPlantedTrees(); 
+  void _saveOperation() async {
+    final uncutTrees = _getUncutPlantedTrees();
 
     if (uncutTrees.isEmpty) {
       // Nessun albero da tagliare
       showDialog(
         context: context,
-        builder: (_) => AlertDialog(
-          title: Text('Nessun albero da tagliare'),
-          content: Text('Prima devi piantare almeno un albero.'),
-          actions: [
-            TextButton(
-              child: Text('OK'),
-              onPressed: () => Navigator.pop(context),
+        builder:
+            (_) => AlertDialog(
+              title: Text('Nessun albero da tagliare'),
+              content: Text('Prima devi piantare almeno un albero.'),
+              actions: [
+                TextButton(
+                  child: Text('OK'),
+                  onPressed: () => Navigator.pop(context),
+                ),
+              ],
             ),
-          ],
-        ),
       );
       return;
     }
@@ -139,36 +149,40 @@ class _CutTreePageState extends State<CutTreePage> {
     final newOp = {
       'id': _uuid.v4(), // Genera un ID unico per l'operazione
       'type': 'tagliato', // setta il tipo di operazione a 'tagliato'
-      'date': DateTime.now().toIso8601String(), // Data in cui è stato effettuato il taglio
+      'date':
+          DateTime.now()
+              .toIso8601String(), // Data in cui è stato effettuato il taglio
       'latitude': _position?.latitude,
       'longitude': _position?.longitude,
       'plantedId': treeToCut['id'], // collegamento all'albero piantato
       'planter': 'Mario Rossi', // Nome della persona che ha piantato l'albero
-      'cutBy': 'Luigi Bianchi', // Nome dell'operatore di taglio (cutting operator)
+      'cutBy':
+          'Luigi Bianchi', // Nome dell'operatore di taglio (cutting operator)
     };
 
     setState(() {
-      _operations.add(newOp); 
+      _operations.add(newOp);
     });
     await _saveOperations(); // Salva le operazioni aggiornate
 
     showDialog(
       context: context,
-      builder: (_) => AlertDialog(
-        title: Text('Intervento registrato'),
-        content: Text(
-          'Albero tagliato in posizione:\nLat: ${_position?.latitude.toStringAsFixed(5)}\nLon: ${_position?.longitude.toStringAsFixed(5)}\nID albero piantato: ${treeToCut['id']} \nOperatore di taglio: ${newOp['cutBy']} \nData: ${DateTime.now().toLocal()}',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              Navigator.pop(context);
-            },
-            child: Text('OK'),
+      builder:
+          (_) => AlertDialog(
+            title: Text('Intervento registrato'),
+            content: Text(
+              'Albero tagliato in posizione:\nLat: ${_position?.latitude.toStringAsFixed(5)}\nLon: ${_position?.longitude.toStringAsFixed(5)}\nID albero piantato: ${treeToCut['id']} \nOperatore di taglio: ${newOp['cutBy']} \nData: ${DateTime.now().toLocal()}',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                },
+                child: Text('OK'),
+              ),
+            ],
           ),
-        ],
-      ),
     );
   }
 
@@ -180,7 +194,7 @@ class _CutTreePageState extends State<CutTreePage> {
     String iconCode = _weatherData!['weather'][0]['icon'];
     String iconUrl = 'http://openweathermap.org/img/wn/$iconCode@2x.png';
 
-    return Card( 
+    return Card(
       margin: EdgeInsets.all(12),
       child: ListTile(
         leading: Image.network(iconUrl),
@@ -204,80 +218,88 @@ class _CutTreePageState extends State<CutTreePage> {
         foregroundColor: Colors.white,
         backgroundColor: Colors.green[700],
       ),
-      body: _loading
-          ? Center(child: CircularProgressIndicator())
-          : _error != null
+      body:
+          _loading
+              ? Center(child: CircularProgressIndicator())
+              : _error != null
               ? Center(child: Text(_error!))
               : Padding(
-                  padding: EdgeInsets.all(16),
-                  child: Column(
-                    children: [
-                      Text(
-                        'Posizione attuale:\nLat: ${_position?.latitude.toStringAsFixed(5)}\nLon: ${_position?.longitude.toStringAsFixed(5)}',
-                        textAlign: TextAlign.center,
+                padding: EdgeInsets.all(16),
+                child: Column(
+                  children: [
+                    Text(
+                      'Posizione attuale:\nLat: ${_position?.latitude.toStringAsFixed(5)}\nLon: ${_position?.longitude.toStringAsFixed(5)}',
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: 20),
+                    Text(
+                      'Meteo attuale:',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    _buildWeatherInfo(),
+                    SizedBox(height: 20),
+                    Text(
+                      canCut
+                          ? 'Condizioni meteo favorevoli per il taglio'
+                          : 'Condizioni meteo NON favorevoli per il taglio',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: canCut ? Colors.green : Colors.red,
+                        fontSize: 16,
                       ),
-                      SizedBox(height: 20),
-                      Text(
-                        'Meteo attuale:',
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(height: 20),
+                    ElevatedButton.icon(
+                      icon: Icon(Icons.save, color: Colors.white),
+                      label: Text(
+                        'Conferma taglio',
+                        style: TextStyle(color: Colors.white),
                       ),
-                      _buildWeatherInfo(),
-                      SizedBox(height: 20),
-                      Text(
-                        canCut
-                            ? 'Condizioni meteo favorevoli per il taglio'
-                            : 'Condizioni meteo NON favorevoli per il taglio',
-                        style: TextStyle(
+                      onPressed:
+                          canCutAndHasTrees
+                              ? _saveOperation
+                              : () {
+                                if (!_hasPlantedTrees()) {
+                                  showDialog(
+                                    context: context,
+                                    builder:
+                                        (_) => AlertDialog(
+                                          title: Text(
+                                            'Nessun albero da tagliare',
+                                          ),
+                                          content: Text(
+                                            'Prima devi piantare almeno un albero.',
+                                          ),
+                                          actions: [
+                                            TextButton(
+                                              child: Text('OK'),
+                                              onPressed:
+                                                  () => Navigator.pop(context),
+                                            ),
+                                          ],
+                                        ),
+                                  );
+                                }
+                              },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                            canCutAndHasTrees ? Colors.green[700] : Colors.grey,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 24,
+                          vertical: 14,
+                        ),
+                        textStyle: TextStyle(
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: canCut ? Colors.green : Colors.red,
-                          fontSize: 16,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      SizedBox(height: 20),
-                      ElevatedButton.icon(
-                        icon: Icon(Icons.save, color: Colors.white),
-                        label: Text(
-                          'Conferma taglio',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        onPressed: canCutAndHasTrees ? _saveOperation : () {
-                          if (!_hasPlantedTrees()) {
-                            showDialog(
-                              context: context,
-                              builder: (_) => AlertDialog(
-                                title: Text('Nessun albero da tagliare'),
-                                content: Text(
-                                  'Prima devi piantare almeno un albero.',
-                                ),
-                                actions: [
-                                  TextButton(
-                                    child: Text('OK'),
-                                    onPressed: () => Navigator.pop(context),
-                                  ),
-                                ],
-                              ),
-                            );
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              canCutAndHasTrees ? Colors.green[700] : Colors.grey,
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 24,
-                            vertical: 14,
-                          ),
-                          textStyle: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
+              ),
     );
   }
 }
